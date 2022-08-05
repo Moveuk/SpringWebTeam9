@@ -17,7 +17,7 @@ public class Contents extends Timestamped {
     private Long id;
 
     @Column(name = "user_id", nullable = false)
-    private String userId;
+    private Long userId;
 
     // 반드시 값을 가지도록 합니다.
     @Column(name = "content_title", nullable = false)
@@ -28,6 +28,13 @@ public class Contents extends Timestamped {
 
     @Column(name = "content_contents", nullable = false)
     private String contents;
+
+    public Contents(Long userId, String title, String username, String contents) {
+        this.userId = userId;
+        this.title = title;
+        this.author = username;
+        this.contents = contents;
+    }
 
     public Contents(String title, String username, String contents) {
         this.title = title;
