@@ -21,10 +21,8 @@ import java.util.Optional;
 public class LikeService {
 
     private final LikeRepository likeRepository;
-    private final JwtTokenProvider jwtTokenProvider;
 
-    public void likeContent(LikeRequestDto requestDto, String jwtToken) {
-        jwtTokenProvider.validateToken(jwtToken);
+    public void likeContent(LikeRequestDto requestDto) {
 
         Like like = Like.builder()
                 .userId(requestDto.getUserId())
@@ -33,9 +31,7 @@ public class LikeService {
         likeRepository.save(like);
     }
 
-    public void likeComment(LikeRequestDto requestDto, String jwtToken) {
-        jwtTokenProvider.validateToken(jwtToken);
-
+    public void likeComment(LikeRequestDto requestDto) {
         Like like = Like.builder()
                 .userId(requestDto.getUserId())
                 .commentId(requestDto.getCommentId())
@@ -43,8 +39,7 @@ public class LikeService {
         likeRepository.save(like);
     }
 
-    public void unlikeContent(LikeRequestDto requestDto, String jwtToken) {
-        jwtTokenProvider.validateToken(jwtToken);
+    public void unlikeContent(LikeRequestDto requestDto) {
 
         Optional<Like> likeopt = findByUserIdAndContentId(requestDto);
 
@@ -52,8 +47,7 @@ public class LikeService {
 
     }
 
-    public void unlikeComment(LikeRequestDto requestDto, String jwtToken) {
-        jwtTokenProvider.validateToken(jwtToken);
+    public void unlikeComment(LikeRequestDto requestDto) {
 
         Optional<Like> likeopt = findByUserIdAndCommentId(requestDto);
 

@@ -20,26 +20,26 @@ public class LikeController {
     private final LikeService likeService;
 
     @PostMapping("/api/likes/contents/{contentId}")
-    public ResponseEntity<LikeRequestDto> likeContent(@RequestBody LikeRequestDto requestDto, String jwtToken) {
-        likeService.likeContent(requestDto, jwtToken);
+    public ResponseEntity<LikeRequestDto> likeContent(@RequestBody LikeRequestDto requestDto) {
+        likeService.likeContent(requestDto);
         return new ResponseEntity<>(requestDto, HttpStatus.CREATED);
     }
 
     @PostMapping("/api/likes/comments/{commentId}")
-    public ResponseEntity<LikeRequestDto> likeComment(@RequestBody LikeRequestDto requestDto, String jwtToken) {
-        likeService.likeComment(requestDto, jwtToken);
+    public ResponseEntity<LikeRequestDto> likeComment(@RequestBody LikeRequestDto requestDto) {
+        likeService.likeComment(requestDto);
         return new ResponseEntity<>(requestDto, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/api/likes/contents/{contentId}")
-    public ResponseEntity<LikeRequestDto> unlikeContent(@RequestBody LikeRequestDto requestDto, String jwtToken) {
-        likeService.unlikeContent(requestDto, jwtToken);
+    public ResponseEntity<LikeRequestDto> unlikeContent(@RequestBody LikeRequestDto requestDto) {
+        likeService.unlikeContent(requestDto);
         return new ResponseEntity<>(requestDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/api/likes/comments/{commentId}")
-    public ResponseEntity<LikeRequestDto> unlikeComment(@RequestBody LikeRequestDto requestDto, String jwtToken) {
-        likeService.unlikeComment(requestDto, jwtToken);
+    public ResponseEntity<LikeRequestDto> unlikeComment(@RequestBody LikeRequestDto requestDto) {
+        likeService.unlikeComment(requestDto);
         return new ResponseEntity<>(requestDto, HttpStatus.OK);
     }
 

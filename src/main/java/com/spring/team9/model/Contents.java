@@ -14,6 +14,7 @@ public class Contents extends Timestamped {
     // ID가 자동으로 생성 및 증가합니다.
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
+    @Column(name = "contents_id")
     private Long id;
 
     @Column(name = "user_id", nullable = false)
