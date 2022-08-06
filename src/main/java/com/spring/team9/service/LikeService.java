@@ -20,18 +20,32 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final ContentsRepository contentsRepository;
 
-    public boolean likecontent(User user, Long contentsId) {
+    private boolean isNotAlreadyLikeContent(User user, Contents contents) {
+        return likeRepository.findByUserAndContents(user, contents).isEmpty();
+    }
+
+    public boolean likeContent(User user, Long contentsId) {
         Contents contents = contentsRepository.findById(contentsId).orElseThrow();
 
-        if(isNotAlreadyLikeContent(user, contents)) {
+        if (isNotAlreadyLikeContent(user, contents)) {
             likeRepository.save(new Like(user, contents));
             return true;
         }
         return false;
     }
 
-//    public boolean likecomment(User user, Long commentsId) {
-//        Contents contents = contentsRepository.findById(commentsId).orElseThrow();
+    //    private boolean isNotAlreadyLikeComment(User user, Comments comments) {
+//        return likeRepository.findByUserAndComments(user, comments).isEmpty();
+//    }
+
+    public void disLikeContent(User user, Long contentsId) {
+        Contents contents = contentsRepository.findById(contentsId).orElseThrow();
+        Like like = likeRepository.findByUserAndContents(user, contents).orElseThrow();
+        likeRepository.delete(like);
+    }
+
+//    public boolean likeComment(User user, Long commentsId) {
+//        Comments comments = commentsRepository.findById(commentsId).orElseThrow();
 //
 //        if(isNotAlreadyLike(user, comments)) {
 //            likeRepository.save(new Like(user, comments));
@@ -40,12 +54,10 @@ public class LikeService {
 //        return false;
 //    }
 
-    private boolean isNotAlreadyLikeContent(User user, Contents contents) {
-        return likeRepository.findByUserAndContents(user, contents).isEmpty();
-    }
-
-//    private boolean isNotAlreadyLikeComment(User user, Comments comments) {
-//        return likeRepository.findByUserAndComments(user, comments).isEmpty();
+//    public void disLikeComment(User user, Long commentsId) {
+//        Comments comments = commentsRepository.findById(commentsId).orElseThrow();
+//        Like like = likeRepository.findByUserAndComments(user, comments).orElseThrow();
+//        likeRepository.delete(like);
 //    }
 
 
