@@ -18,20 +18,26 @@ public class Like {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(name = "content_id")
-    private Long contentId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "content_id")
+    private Contents contents;
 
-    @Column(name = "comment_id")
-    private Long commentId;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "comment_id")
+//    private Comments comments;
 
-    @Builder
-    public Like(Long userId, Long contentId, Long commentId) {
-        this.userId = userId;
-        this.contentId = contentId;
-        this.commentId = commentId;
+    public Like(User user, Contents contents) {
+        this.user = user;
+        this.contents = contents;
     }
+
+//    public Like(User user, Comments comments) {
+//        this.user = user;
+//        this.comments = comments;
+//    }
 
 }

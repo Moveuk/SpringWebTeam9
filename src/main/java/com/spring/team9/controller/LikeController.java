@@ -2,14 +2,14 @@ package com.spring.team9.controller;
 
 
 import com.spring.team9.dto.LikeRequestDto;
+import com.spring.team9.model.Like;
+import com.spring.team9.security.UserDetailsImpl;
 import com.spring.team9.service.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -19,28 +19,24 @@ public class LikeController {
 
     private final LikeService likeService;
 
-    @PostMapping("/api/likes/contents/{contentId}")
-    public ResponseEntity<LikeRequestDto> likeContent(@RequestBody LikeRequestDto requestDto) {
-        likeService.likeContent(requestDto);
-        return new ResponseEntity<>(requestDto, HttpStatus.CREATED);
+    @PostMapping("/like/{contentsId}")
+    public ResponseEntity<String> likecontent(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long contentsId) {
+        boolean result = false;
+        if (userDetails != null) {
+            result = likeService.likecontent(userDetails.getUser(), contentsId);
+        }
+        return result ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
     }
 
-    @PostMapping("/api/likes/comments/{commentId}")
-    public ResponseEntity<LikeRequestDto> likeComment(@RequestBody LikeRequestDto requestDto) {
-        likeService.likeComment(requestDto);
-        return new ResponseEntity<>(requestDto, HttpStatus.CREATED);
-    }
+    @PostMapping("/like/{commentsId}")
+    public ResponseEntity<String> likecomment(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long commentsId) {
+        boolean result = false;
+        if (userDetails != null) {
+            result = likeService.likecontent(userDetails.getUser(), commentsId);
+        }
+        return result ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-    @DeleteMapping("/api/likes/contents/{contentId}")
-    public ResponseEntity<LikeRequestDto> unlikeContent(@RequestBody LikeRequestDto requestDto) {
-        likeService.unlikeContent(requestDto);
-        return new ResponseEntity<>(requestDto, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/api/likes/comments/{commentId}")
-    public ResponseEntity<LikeRequestDto> unlikeComment(@RequestBody LikeRequestDto requestDto) {
-        likeService.unlikeComment(requestDto);
-        return new ResponseEntity<>(requestDto, HttpStatus.OK);
     }
 
 }

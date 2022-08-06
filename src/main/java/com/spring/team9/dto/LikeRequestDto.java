@@ -1,13 +1,16 @@
 package com.spring.team9.dto;
 
+import com.spring.team9.model.Contents;
+import com.spring.team9.model.User;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class LikeRequestDto {
-    private Long userId;
-    private Long contentId;
-    private Long commentId;
+    private User user;
+    private Contents contents;
+//    private Comments commtents;
+
+
 
 }
