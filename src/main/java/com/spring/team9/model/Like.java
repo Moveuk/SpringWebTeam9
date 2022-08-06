@@ -19,24 +19,24 @@ public class Like {
     private Long id;
 
     @Column(nullable = false)
-    private String username;
+    private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "content_id")
     private Contents contents;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "comment_id")
-//    private Comments comments;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 
-    public Like(String username, Contents contents) {
-        this.username = username;
+    public Like(Long userId, Contents contents) {
+        this.userId = userId;
         this.contents = contents;
     }
 
-//    public Like(User user, Comments comments) {
-//        this.user = user;
-//        this.comments = comments;
-//    }
+    public Like(Long userId, Comment comment) {
+        this.userId = userId;
+        this.comment = comment;
+    }
 
 }
