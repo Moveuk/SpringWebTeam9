@@ -14,18 +14,9 @@ public class CommentService {
 
 	private final CommentRepository commentRepository;
 
-	public Comment createComment(CommentRequestDto requestDto, Long userKey) {
-		Comment comment = new Comment(requestDto, userKey);
-		commentRepository.save(comment);
+	public Comment createComment(CommentRequestDto requestDto) {
+		Comment comment = requestDto.toEntity();
+		commentRepository.save(requestDto.toEntity());
 		return comment;
-	}
-
-	@Transactional
-	public Long update(Long commentKey, CommentRequestDto requestDto) {
-		Comment comment = commentRepository.findById(commentKey).orElseThrow(
-				() -> new CustomException(ErrorCode.NOT_FOUND_COMMENT)
-		);
-		comment.update(requestDto);
-		return comment.getCommentKey();
 	}
 }

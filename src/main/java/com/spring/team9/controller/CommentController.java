@@ -1,7 +1,11 @@
 package com.spring.team9.controller;
 
+import com.spring.team9.dto.CommentRequestDto;
 import com.spring.team9.model.Comment;
+import com.spring.team9.model.Contents;
+import com.spring.team9.model.User;
 import com.spring.team9.repository.CommentRepository;
+import com.spring.team9.security.UserDetailsImpl;
 import com.spring.team9.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,35 +21,27 @@ public class CommentController {
 	private final CommentService commentService;
 
 
-	@GetMapping("/comments")
-	public List<Comment> getComments() {
-		return commentRepository.findAllByOrderByModifiedAtDesc();
-	}
-
-	@PreAuthorize("hasRole('ROLE_USER')")
-	@PostMapping("/comments/comment")
+	@PostMapping("/api/comments/{commentId}")
 	public Comment createComment(@RequestBody CommentRequestDto requestDto,
 								 @AuthenticationPrincipal UserDetailsImpl userDetails) {
-		Long userKey = userDetails.getUser().getUserKey();
-		return commentService.createComment(requestDto, userKey);
+		return commentService.createComment(requestDto);
 	}
 
-	@GetMapping("/comments/{commentKey}")
-	public Comment getDetailComment(@PathVariable Long commentKey) {
-		return commentRepository.findById(commentKey).orElse(null);
+	@GetMapping("/api/comments/{commentId}")
+	public Comment getDetailComment(@PathVariable Long commentId) {
+		return commentRepository.findById(commentId).orElse(null);
 	}
 
-	@PreAuthorize("hasRole('ROLE_USER')")
-	@PatchMapping("/comments/{commentKey}")
-	public Long updateComment(@PathVariable Long commentKey, @RequestBody CommentRequestDto requestDto) {
-		commentService.update(commentKey, requestDto);
-		return commentKey;
-	}
+//	@PatchMapping("/api/comments/{commentId}")
+//	public Long updateComment(@PathVariable Long commentId, @RequestBody CommentRequestDto requestDto) {
+//		commentService.update(commentId, requestDto);
+//		return commentId;
+//	}
 
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@DeleteMapping("/comments/{commentKey}")
-	public Long deleteComment(@PathVariable Long commentKey) {
-		commentRepository.deleteById(commentKey);
-		return commentKey;
+	@DeleteMapping("/api/comments/{commentId}")
+	public Long deleteComment(@PathVariable Long commentId) {
+		commentRepository.deleteById(commentId);
+		return commentId;
 	}
 }
