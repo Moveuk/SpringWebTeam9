@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 public class LikeRequestDto {
-    private User user;
+    private String username;
     private Contents contents;
 //    private Comments commtents;
 

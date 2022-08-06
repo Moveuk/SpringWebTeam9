@@ -13,26 +13,27 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@RequestMapping("/api/like")
 @RequiredArgsConstructor
 @RestController
 public class LikeController {
 
     private final LikeService likeService;
 
-    @PostMapping("/like/{contentsId}")
+    @PostMapping("/contents/{contentsId}")
     public ResponseEntity<String> likeContent(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long contentsId) {
         boolean result = false;
         if (userDetails != null) {
-            result = likeService.likeContent(userDetails.getUser(), contentsId);
+            result = likeService.likeContent(userDetails.getUsername(), contentsId);
         }
         return result ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
     }
 
-    @DeleteMapping("/like/{contentsId}")
+    @DeleteMapping("/contents/{contentsId}")
     public ResponseEntity<String> disLikeContent(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long contentsId) {
         if (userDetails != null) {
-            likeService.disLikeContent(userDetails.getUser(), contentsId);
+            likeService.disLikeContent(userDetails.getUsername(), contentsId);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }

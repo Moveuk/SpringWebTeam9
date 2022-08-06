@@ -18,9 +18,8 @@ public class Like {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(nullable = false)
+    private String username;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "content_id")
@@ -30,8 +29,8 @@ public class Like {
 //    @JoinColumn(name = "comment_id")
 //    private Comments comments;
 
-    public Like(User user, Contents contents) {
-        this.user = user;
+    public Like(String username, Contents contents) {
+        this.username = username;
         this.contents = contents;
     }
 

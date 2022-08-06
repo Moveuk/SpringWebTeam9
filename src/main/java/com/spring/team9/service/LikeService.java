@@ -20,15 +20,15 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final ContentsRepository contentsRepository;
 
-    private boolean isNotAlreadyLikeContent(User user, Contents contents) {
-        return likeRepository.findByUserAndContents(user, contents).isEmpty();
+    private boolean isNotAlreadyLikeContent(String username, Contents contents) {
+        return likeRepository.findByUsernameAndContents(username, contents).isEmpty();
     }
 
-    public boolean likeContent(User user, Long contentsId) {
+    public boolean likeContent(String username, Long contentsId) {
         Contents contents = contentsRepository.findById(contentsId).orElseThrow();
 
-        if (isNotAlreadyLikeContent(user, contents)) {
-            likeRepository.save(new Like(user, contents));
+        if (isNotAlreadyLikeContent(username, contents)) {
+            likeRepository.save(new Like(username, contents));
             return true;
         }
         return false;
@@ -38,9 +38,9 @@ public class LikeService {
 //        return likeRepository.findByUserAndComments(user, comments).isEmpty();
 //    }
 
-    public void disLikeContent(User user, Long contentsId) {
+    public void disLikeContent(String username, Long contentsId) {
         Contents contents = contentsRepository.findById(contentsId).orElseThrow();
-        Like like = likeRepository.findByUserAndContents(user, contents).orElseThrow();
+        Like like = likeRepository.findByUsernameAndContents(username, contents).orElseThrow();
         likeRepository.delete(like);
     }
 
