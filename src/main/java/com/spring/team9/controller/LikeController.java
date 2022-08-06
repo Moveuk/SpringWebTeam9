@@ -24,7 +24,7 @@ public class LikeController {
         if (userDetails != null) {
             result = likeService.likeContent(userDetails.getUser().getId(), contentsId);
         }
-        return result ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return result ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>("로그인이 필요합니다.", HttpStatus.OK);
 
     }
 
@@ -42,7 +42,7 @@ public class LikeController {
         if (userDetails != null) {
             result = likeService.likeComment(userDetails.getUser().getId(), commentId);
         }
-        return result ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return result ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>("로그인이 필요합니다.", HttpStatus.OK);
 
     }
 
