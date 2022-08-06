@@ -3,6 +3,9 @@ package com.spring.team9.service;
 import com.spring.team9.dto.ContentsRequestDto;
 import com.spring.team9.dto.ContentsResponseDto;
 import com.spring.team9.model.Contents;
+import com.spring.team9.model.User;
+import com.spring.team9.repository.ContentsRepository;
+import com.spring.team9.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,32 +13,32 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class ContentsService {
 
-    private final com.spring.team9.repository.ContentsRepository ContentsRepository;
-
+    private final ContentsRepository ContentsRepository;
+    private final UserRepository userRepository;
     // 게시글 작성
     @Transactional // 메소드 동작이 SQL 쿼리문임을 선언합니다.
-    public Contents createContents(ContentsRequestDto requestDto, String username) {
+    public Contents createContents(ContentsRequestDto requestDto) {
         String contentsCheck = requestDto.getContents();
         String titleCheck = requestDto.getTitle();
         if (contentsCheck.contains("script") || contentsCheck.contains("<") || contentsCheck.contains(">")) {
-            Contents contents = new Contents(requestDto, username, "xss 안돼요,,하지마세요ㅠㅠ");
-            ContentsRepository.save(contents);
-            return contents;
+            throw new IllegalArgumentException("컨텐츠에는 script/</> 가 포함될 수 없습니다.");
         }
         if (titleCheck.contains("script") || titleCheck.contains("<") || titleCheck.contains(">")) {
-            Contents contents = new Contents("xss 안돼요,,하지마세요ㅠㅠ", username, "xss 안돼요,,하지마세요ㅠㅠ");
-            ContentsRepository.save(contents);
-            return contents;
+            throw new IllegalArgumentException("제목에는 script/</> 가 포함될 수 없습니다.");
         }
+        User user = userRepository.findByUsername(requestDto.getAuthor()).orElseThrow(()-> new RuntimeException("게시글이 존재하지 않습니다."));
+        requestDto.setUserId(user.getId());
         // 요청받은 DTO 로 DB에 저장할 객체 만들기
-        Contents contents = new Contents(requestDto, username);
-        ContentsRepository.save(contents);
-        return contents;
+        Contents contents = requestDto.toContents(); //컨테츠객체 빌드
+//        Contents contents = new Contents(requestDto.getUserId(), requestDto.getTitle(), requestDto.getAuthor(), requestDto.getContents(), requestDto.getImgUrl()); //컨테츠객체 빌드
+
+        return ContentsRepository.save(contents);
     }
 
     // 게시글 조회
@@ -58,7 +61,7 @@ public class ContentsService {
         Contents Contents = ContentsRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
-        Contents.update(requestDto);
+        Contents.update(requestDto.getTitle(), requestDto.getAuthor(), requestDto.getContents(), requestDto.getImgUrl());
         return Contents.getId();
     }
 

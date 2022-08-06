@@ -17,7 +17,7 @@ public class ContentsResponseDto {
     private final LocalDateTime modifiedAt;
 
     @Builder
-    public ContentsResponseDto(Contents content, int countReply) {
+    public ContentsResponseDto(Contents content) {
         this.id = content.getId();
         this.title = content.getTitle();
         this.name = content.getAuthor();
