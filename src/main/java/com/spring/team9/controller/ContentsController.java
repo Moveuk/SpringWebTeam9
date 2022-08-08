@@ -6,6 +6,8 @@ import com.spring.team9.dto.ContentsResponseDto;
 import com.spring.team9.model.Contents;
 import com.spring.team9.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,12 +40,32 @@ public class ContentsController {
     // 게시글 작성
 
     @PostMapping("/api/contents")
-    public Contents createContents(ContentsRequestDto requestDto, MultipartFile imageFile, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<String> createContents(ContentsRequestDto requestDto, MultipartFile imageFile, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         // 로그인 되어 있는 ID의 username
         String username = userDetails.getUser().getUsername();
-        String imagePath = s3Service.upload(imageFile);
-        requestDto.setImgUrl(imagePath); // 받은 스트링값을 Url필드로 주입
+        String imagePath;
+        try {
+            imagePath = s3Service.uploadImage(imageFile);
+            requestDto.setImgUrl(imagePath); // 받은 스트링값을 Url필드로 주입
+        } catch (NullPointerException e) {
+            return new ResponseEntity<>("파일 변환에 실패했습니다", HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+        }
         requestDto.setAuthor(username);
-        return ContentsService.createContents(requestDto);
+        return new ResponseEntity<>("컨텐츠 등록에 성공했습니다",HttpStatus.OK);
     }
+//    @PostMapping("/api/contents")
+//    public ResponseEntity<Contents> createContents(ContentsRequestDto requestDto, MultipartFile imageFile, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        // 로그인 되어 있는 ID의 username
+//        String username = userDetails.getUser().getUsername();
+//        String imagePath;
+//        if(imageFile!=null) {
+//            imagePath = s3Service.upload(imageFile);
+//            requestDto.setImgUrl(imagePath); // 받은 스트링값을 Url필드로 주입
+//        }
+//        requestDto.setAuthor(username);
+//        ContentsService.createContents(requestDto);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 }
