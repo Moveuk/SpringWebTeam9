@@ -20,6 +20,7 @@ public class LikeController {
 
     private final LikeService likeService;
 
+    // 게시글 좋아요 등록
     @PostMapping("/contents/{contentsId}")
     public ResponseEntity<String> likeContent(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long contentsId) {
         boolean result = false;
@@ -29,16 +30,19 @@ public class LikeController {
         return result ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>("로그인이 필요합니다.", HttpStatus.OK);
     }
 
+    // 게시글 좋아요 카운트 테스트 (로그로 출력)
     @GetMapping("/contents/{contentsId}")
-    public ResponseEntity<List<String>> likeCountContent(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long contentsId) {
+    public ResponseEntity<List<String>> likeCountContent(@PathVariable Long contentsId) {
 
         log.info("contentsId : {} ", contentsId);
 
-        List<String> result = likeService.likeCountContent(contentsId, userDetails.getUser().getId());
+        List<String> result = likeService.likeCountContent(contentsId);
         log.info("likeCountContent : {}", result);
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    // 게시글 좋아요 취소
     @DeleteMapping("/contents/{contentsId}")
     public ResponseEntity<String> disLikeContent(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long contentsId) {
         if (userDetails != null) {
@@ -47,6 +51,7 @@ public class LikeController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // 댓글 좋아요 등록
     @PostMapping("/comment/{commentId}")
     public ResponseEntity<String> likeComment(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long commentId) {
         boolean result = false;
@@ -56,6 +61,7 @@ public class LikeController {
         return result ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>("로그인이 필요합니다.", HttpStatus.OK);
     }
 
+    // 댓글 좋아요 취소
     @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<String> disLikeComment(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long commentId) {
         if (userDetails != null) {

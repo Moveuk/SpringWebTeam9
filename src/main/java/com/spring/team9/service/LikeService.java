@@ -22,10 +22,12 @@ public class LikeService {
     private final ContentsRepository contentsRepository;
     private final CommentRepository commentRepository;
 
+    // 게시글 좋아요 여부 확인
     private boolean isNotAlreadyLikeContent(Long userId, Contents contents) {
         return likeRepository.findByUserIdAndContents(userId, contents).isEmpty();
     }
 
+    // 게시글 좋아요 등록
     public boolean likeContent(Long userId, Long contentsId) {
         Contents contents = contentsRepository.findById(contentsId).orElseThrow();
 
@@ -36,30 +38,28 @@ public class LikeService {
         return false;
     }
 
+    // 게시글 좋아요 취소
     public void disLikeContent(Long userId, Long contentsId) {
         Contents contents = contentsRepository.findById(contentsId).orElseThrow();
         Like like = likeRepository.findByUserIdAndContents(userId, contents).orElseThrow();
         likeRepository.delete(like);
     }
 
-    public List<String> likeCountContent(Long userId, Long contentsId) {
+    // 게시글 좋아요 카운트 테스트 (로그로 출력)
+    public List<String> likeCountContent(Long contentsId) {
         Contents contents = contentsRepository.findById(contentsId).orElseThrow();
         Integer countByContents = likeRepository.countByContents(contents).orElse(0);
 
         List<String> result = new ArrayList<>(Arrays.asList(String.valueOf(countByContents)));
-
-        if (Objects.nonNull(userId)) {
-            result.add(String.valueOf(isNotAlreadyLikeContent(userId, contents)));
-            return result;
-        }
         return result;
-
     }
 
+    // 댓글 좋아요 여부 확인
     private boolean isNotAlreadyLikeComment(Long userId, Comment comment) {
         return likeRepository.findByUserIdAndComment(userId, comment).isEmpty();
     }
 
+    // 댓글 좋아요 등록
     public boolean likeComment(Long userId, Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow();
 
@@ -70,6 +70,7 @@ public class LikeService {
         return false;
     }
 
+    // 댓글 좋아요 취소
     public void disLikeComment(Long userId, Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow();
         Like like = likeRepository.findByUserIdAndComment(userId, comment).orElseThrow();
