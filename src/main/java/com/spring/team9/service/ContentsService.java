@@ -5,6 +5,7 @@ import com.spring.team9.dto.ContentsResponseDto;
 import com.spring.team9.model.Contents;
 import com.spring.team9.model.User;
 import com.spring.team9.repository.ContentsRepository;
+import com.spring.team9.repository.LikeRepository;
 import com.spring.team9.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class ContentsService {
 
     private final ContentsRepository ContentsRepository;
     private final UserRepository userRepository;
+    private final LikeRepository likeRepository;
     // 게시글 작성
     @Transactional // 메소드 동작이 SQL 쿼리문임을 선언합니다.
     public Contents createContents(ContentsRequestDto requestDto) {
@@ -47,8 +49,10 @@ public class ContentsService {
         List<ContentsResponseDto> listContents = new ArrayList<>();
         for (Contents content : contents) {
             // + 댓글 개수 카운팅 (추가 기능)
+            int countLike = likeRepository.countByContentsId(content.getId());
             ContentsResponseDto contentsResponseDto = ContentsResponseDto.builder()
                     .content(content)
+                    .countLike(countLike)
                     .build();
             listContents.add(contentsResponseDto);
         }
