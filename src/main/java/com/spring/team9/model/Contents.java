@@ -1,6 +1,7 @@
 package com.spring.team9.model;
 
 import com.spring.team9.dto.ContentsRequestDto;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,11 +10,13 @@ import javax.persistence.*;
 @Getter // get 함수를 일괄적으로 만들어줍니다.
 @NoArgsConstructor // 기본 생성자를 만들어줍니다.
 @Entity // DB 테이블 역할을 합니다.
+
 public class Contents extends Timestamped {
 
     // ID가 자동으로 생성 및 증가합니다.
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
+    @Column(name = "content_id")
     private Long id;
 
     @Column(name = "user_id", nullable = false)
@@ -29,40 +32,24 @@ public class Contents extends Timestamped {
     @Column(name = "content_contents", nullable = false)
     private String contents;
 
-    public Contents(Long userId, String title, String username, String contents) {
+    @Column(name = "content_imgurl")
+    private String imgUrl;
+
+
+    //img를 포함한 게시글
+    @Builder
+    public Contents(Long userId, String title, String author, String contents, String imgUrl) {
         this.userId = userId;
         this.title = title;
-        this.author = username;
+        this.author = author;
         this.contents = contents;
+        this.imgUrl = imgUrl;
     }
 
-    public Contents(String title, String username, String contents) {
+    public void update(String title, String author, String contents, String imgUrl) {
         this.title = title;
-        this.author = username;
+        this.author = author;
         this.contents = contents;
-    }
-
-    public Contents(ContentsRequestDto requestDto) {
-        this.title = requestDto.getTitle();
-        this.author = requestDto.getName();
-        this.contents = requestDto.getContents();
-    }
-
-    public Contents(ContentsRequestDto requestDto, String username) {
-        this.title = requestDto.getTitle();
-        this.author = username;
-        this.contents = requestDto.getContents();
-    }
-
-    public void update(ContentsRequestDto requestDto) {
-        this.title = requestDto.getTitle();
-        this.author = requestDto.getName();
-        this.contents = requestDto.getContents();
-    }
-
-    public Contents(ContentsRequestDto requestDto, String username, String contents) {
-        this.title = requestDto.getTitle();
-        this.author = username;
-        this.contents = contents;
+        this.imgUrl = imgUrl;
     }
 }
