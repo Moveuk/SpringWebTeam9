@@ -9,6 +9,11 @@ import com.spring.team9.repository.LikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
 @RequiredArgsConstructor
 @Service
 public class LikeService {
@@ -35,6 +40,20 @@ public class LikeService {
         Contents contents = contentsRepository.findById(contentsId).orElseThrow();
         Like like = likeRepository.findByUserIdAndContents(userId, contents).orElseThrow();
         likeRepository.delete(like);
+    }
+
+    public List<String> likeCountContent(Long userId, Long contentsId) {
+        Contents contents = contentsRepository.findById(contentsId).orElseThrow();
+        Integer countByContents = likeRepository.countByContents(contents).orElse(0);
+
+        List<String> result = new ArrayList<>(Arrays.asList(String.valueOf(countByContents)));
+
+        if (Objects.nonNull(userId)) {
+            result.add(String.valueOf(isNotAlreadyLikeContent(userId, contents)));
+            return result;
+        }
+        return result;
+
     }
 
     private boolean isNotAlreadyLikeComment(Long userId, Comment comment) {
