@@ -36,8 +36,6 @@ public class ContentsService {
         requestDto.setUserId(user.getId());
         // 요청받은 DTO 로 DB에 저장할 객체 만들기
         Contents contents = requestDto.toContents(); //컨테츠객체 빌드
-//        Contents contents = new Contents(requestDto.getUserId(), requestDto.getTitle(), requestDto.getAuthor(), requestDto.getContents(), requestDto.getImgUrl()); //컨테츠객체 빌드
-
         return ContentsRepository.save(contents);
     }
 
