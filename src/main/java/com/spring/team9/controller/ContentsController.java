@@ -31,20 +31,12 @@ public class ContentsController {
     }
 
     // 게시글 조회
-//    @GetMapping("/api/contents/{id}")
-//    public Contents getContents(@PathVariable Long id) {
-//        Contents contents = ContentsRepository.findById(id).orElseThrow(
-//                () -> new IllegalArgumentException("id가 존재하지 않습니다."));
-//        return contents;
-//    }
-    // 게시글 조회
     @GetMapping("/api/contents/{id}")
     public ContentsResponseDto getContent(@PathVariable Long id) {
         return ContentsService.getContents(id);
     }
 
     // 게시글 작성
-
     @PostMapping("/api/contents")
     public ResponseEntity<String> createContents(ContentsRequestDto requestDto, MultipartFile imageFile, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         // 로그인 되어 있는 ID의 username
