@@ -45,7 +45,7 @@ public class ContentsController {
         // 로그인 되어 있는 ID의 username
         String username = userDetails.getUser().getUsername();
         String imagePath;
-        if (!Objects.isNull(imageFile) || !imageFile.isEmpty() || imageFile != null) {
+        if (!Objects.isNull(imageFile)) {
             try {
                 imagePath = s3Service.uploadImage(imageFile);
                 requestDto.setImgUrl(imagePath); // 받은 스트링값을 Url필드로 주입
