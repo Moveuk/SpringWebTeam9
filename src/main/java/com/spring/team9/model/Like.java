@@ -1,7 +1,6 @@
 package com.spring.team9.model;
 
-import com.spring.team9.dto.LikeRequestDto;
-import lombok.Builder;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

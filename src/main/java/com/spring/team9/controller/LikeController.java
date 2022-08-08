@@ -1,8 +1,6 @@
 package com.spring.team9.controller;
 
 
-import com.spring.team9.dto.LikeRequestDto;
-import com.spring.team9.model.Like;
 import com.spring.team9.security.UserDetailsImpl;
 import com.spring.team9.service.LikeService;
 import lombok.RequiredArgsConstructor;
