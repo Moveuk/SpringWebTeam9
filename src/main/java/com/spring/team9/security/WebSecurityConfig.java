@@ -53,7 +53,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("**").permitAll()
                 .antMatchers("/").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/contents").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/reply/**").permitAll()
                 // 그 외 모든 요청은 인증과정 필요
                 .anyRequest().authenticated()
                 .and()
