@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
-@RequestMapping("/api/like")
+@RequestMapping("/api/likes")
 @RequiredArgsConstructor
 @RestController
 public class LikeController {
@@ -28,18 +28,6 @@ public class LikeController {
             result = likeService.likeContent(userDetails.getUser().getId(), contentsId);
         }
         return result ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>("로그인이 필요합니다.", HttpStatus.OK);
-    }
-
-    // 게시글 좋아요 카운트 테스트 (로그로 출력)
-    @GetMapping("/contents/{contentsId}")
-    public ResponseEntity<List<String>> likeCountContent(@PathVariable Long contentsId) {
-
-        log.info("contentsId : {} ", contentsId);
-
-        List<String> result = likeService.likeCountContent(contentsId);
-        log.info("likeCountContent : {}", result);
-
-        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     // 게시글 좋아요 취소

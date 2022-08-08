@@ -45,15 +45,6 @@ public class LikeService {
         likeRepository.delete(like);
     }
 
-    // 게시글 좋아요 카운트 테스트 (로그로 출력)
-    public List<String> likeCountContent(Long contentsId) {
-        Contents contents = contentsRepository.findById(contentsId).orElseThrow();
-        Integer countByContents = likeRepository.countByContents(contents).orElse(0);
-
-        List<String> result = new ArrayList<>(Arrays.asList(String.valueOf(countByContents)));
-        return result;
-    }
-
     // 댓글 좋아요 여부 확인
     private boolean isNotAlreadyLikeComment(Long userId, Comment comment) {
         return likeRepository.findByUserIdAndComment(userId, comment).isEmpty();
