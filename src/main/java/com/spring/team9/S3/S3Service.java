@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.Objects;
+
 
 @Service
 @NoArgsConstructor
@@ -42,15 +44,17 @@ public class S3Service {
                 .build();
     }
 
-    public String upload(MultipartFile file) {
-        String fileName = file.getOriginalFilename();
+    public String uploadImage(MultipartFile file) throws IllegalArgumentException, NullPointerException {
+        String fileName = Objects.requireNonNull(file.getOriginalFilename()).toLowerCase();
         try {
+            if (!(fileName.endsWith(".bmp") || fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png"))) {
+                throw new IllegalArgumentException("bmp,jpg,jpeg,png 형식의 이미지 파일이 요구됨.");
+            }
             s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
-        }catch(IOException e){
-            throw new RuntimeException("S3 버킷 이미지 저장실패");
+        } catch (IOException e) {
+            throw new RuntimeException("S3 파일 업로드 실패.");
         }
-
         return s3Client.getUrl(bucket, fileName).toString();    ///url string 리턴
     }
 }
