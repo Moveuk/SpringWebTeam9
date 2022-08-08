@@ -5,6 +5,7 @@ import com.spring.team9.dto.ContentsResponseDto;
 import com.spring.team9.model.Contents;
 import com.spring.team9.model.User;
 import com.spring.team9.repository.ContentsRepository;
+import com.spring.team9.repository.LikeRepository;
 import com.spring.team9.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class ContentsService {
 
     private final ContentsRepository ContentsRepository;
     private final UserRepository userRepository;
+    private final LikeRepository likeRepository;
     // 게시글 작성
     @Transactional // 메소드 동작이 SQL 쿼리문임을 선언합니다.
     public Contents createContents(ContentsRequestDto requestDto) {
@@ -39,18 +41,31 @@ public class ContentsService {
         return ContentsRepository.save(contents);
     }
 
-    // 게시글 조회
-    public List<ContentsResponseDto> getContents() {
+    // 게시글 목록 리스트 조회
+    public List<ContentsResponseDto> getContentsList() {
         List<Contents> contents = ContentsRepository.findAllByOrderByCreatedAtDesc();
         List<ContentsResponseDto> listContents = new ArrayList<>();
         for (Contents content : contents) {
-            // + 댓글 개수 카운팅 (추가 기능)
+            // + 좋아요 개수 카운팅
+            int countLike = likeRepository.countByContentsId(content.getId());
             ContentsResponseDto contentsResponseDto = ContentsResponseDto.builder()
                     .content(content)
+                    .countLike(countLike)
                     .build();
             listContents.add(contentsResponseDto);
         }
         return listContents;
+    }
+
+    // 게시글 조회
+    public ContentsResponseDto getContents(Long id) {
+        Contents content = ContentsRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        int countLike = likeRepository.countByContentsId(content.getId());
+        return ContentsResponseDto.builder()
+                .content(content)
+                .countLike(countLike)
+                .build();
     }
 
     // 게시글 수정 기능 (사용 안함)
