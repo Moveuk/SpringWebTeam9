@@ -36,6 +36,7 @@ public class Contents extends Timestamped {
     private String imgUrl;
 
 
+
     //img를 포함한 게시글
     @Builder
     public Contents(Long userId, String title, String author, String contents, String imgUrl) {

@@ -43,12 +43,12 @@ public class ContentsService {
         return ContentsRepository.save(contents);
     }
 
-    // 게시글 조회
-    public List<ContentsResponseDto> getContents() {
+    // 게시글 목록 리스트 조회
+    public List<ContentsResponseDto> getContentsList() {
         List<Contents> contents = ContentsRepository.findAllByOrderByCreatedAtDesc();
         List<ContentsResponseDto> listContents = new ArrayList<>();
         for (Contents content : contents) {
-            // + 댓글 개수 카운팅 (추가 기능)
+            // + 좋아요 개수 카운팅
             int countLike = likeRepository.countByContentsId(content.getId());
             ContentsResponseDto contentsResponseDto = ContentsResponseDto.builder()
                     .content(content)
@@ -57,6 +57,17 @@ public class ContentsService {
             listContents.add(contentsResponseDto);
         }
         return listContents;
+    }
+
+    // 게시글 조회
+    public ContentsResponseDto getContents(Long id) {
+        Contents content = ContentsRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        int countLike = likeRepository.countByContentsId(content.getId());
+        return ContentsResponseDto.builder()
+                .content(content)
+                .countLike(countLike)
+                .build();
     }
 
     // 게시글 수정 기능 (사용 안함)
