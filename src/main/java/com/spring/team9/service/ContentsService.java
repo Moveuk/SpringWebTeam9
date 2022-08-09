@@ -7,7 +7,9 @@ import com.spring.team9.model.User;
 import com.spring.team9.repository.ContentsRepository;
 import com.spring.team9.repository.LikeRepository;
 import com.spring.team9.repository.UserRepository;
+import com.spring.team9.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -79,11 +81,12 @@ public class ContentsService {
     }
 
     // 게시글 삭제
-    public void deleteContent(Long ContentId, String userName) {
-        String writer = ContentsRepository.findById(ContentId).orElseThrow(
-                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")).getAuthor();
-        if (Objects.equals(writer, userName)) {
-            ContentsRepository.deleteById(ContentId);
-        } else new IllegalArgumentException("작성한 유저가 아닙니다.");
+    public Long deleteContents(Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Contents Contents = ContentsRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        if(userDetails.getUser().getUsername().equals(Contents.getAuthor())) {
+            ContentsRepository.deleteById(id);
+        }
+        return id;
     }
 }
