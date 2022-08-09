@@ -22,7 +22,7 @@ public class CommentController {
 
 	// test 용
 	@GetMapping("/api/comments/{postId}")
-	public List<CommentResponseDto>  getComment(@PathVariable Long postId) {
+	public List<CommentResponseDto> getComment(@PathVariable Long postId) {
 		return commentService.getComment(postId);
 	}
 	//

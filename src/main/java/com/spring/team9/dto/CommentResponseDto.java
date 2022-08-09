@@ -1,26 +1,25 @@
 package com.spring.team9.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.spring.team9.model.Comment;
-import com.spring.team9.model.User;
-import org.springframework.stereotype.Component;
+import lombok.Builder;
+import lombok.Getter;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.util.*;
 
-@Component
+@Getter
 public class CommentResponseDto {
-	private User user;
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private final LocalDateTime modifiedAt;
+	private String username;
 	private String commentContent;
 	private List<Comment> replies;
 
-	public List<CommentResponseDto> ResponseDtoList (List<Comment> comment) {
-		return comment.stream()
-						.map(CommentResponseDto::new)
-						.collect(Collectors.toList());
-	}
-
-	public CommentResponseDto (Comment comment) {
-		this.user = comment.getUser();
+	@Builder
+	public CommentResponseDto(Comment comment) {
+		this.modifiedAt = comment.getModifiedAt();
+		this.username = comment.getUser().getUsername();
 		this.commentContent = comment.getCommentContent();
 		this.replies = comment.getReplies();
 	}

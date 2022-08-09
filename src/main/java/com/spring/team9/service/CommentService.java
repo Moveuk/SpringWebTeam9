@@ -10,22 +10,26 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
 public class CommentService {
 
 	private final CommentRepository commentRepository;
-	private final CommentResponseDto commentResponseDto;
 	private final ContentsRepository contentsRepository;
 
 	// test
 	public List<CommentResponseDto> getComment(Long postId) {
-		List<Comment> comment = commentRepository.findAllByOrderByCreatedAtDesc(postId);
-		return commentResponseDto.ResponseDtoList(comment);
+		List<Comment> comments = commentRepository.findAllByOrderByCreatedAtDesc(postId);
+		List<CommentResponseDto> responseDtoList = new ArrayList<>();
+		for(Comment comment : comments) {
+			CommentResponseDto commentResponseDto = CommentResponseDto.builder()
+							.comment(comment)
+							.build();
+			responseDtoList.add(commentResponseDto);
+		}
+		return responseDtoList;
 	}
 	//
 
