@@ -20,8 +20,8 @@ public class CommentService {
 	private final ContentsRepository contentsRepository;
 
 	// test
-	public List<CommentResponseDto> getComment(Long postId) {
-		List<Comment> comments = commentRepository.findAllByOrderByCreatedAtDesc(postId);
+	public List<CommentResponseDto> getComment(Long contentId) {
+		List<Comment> comments = commentRepository.findAllByOrderByCreatedAtDesc(contentId);
 		List<CommentResponseDto> responseDtoList = new ArrayList<>();
 		for(Comment comment : comments) {
 			CommentResponseDto commentResponseDto = CommentResponseDto.builder()
@@ -41,14 +41,14 @@ public class CommentService {
 			parent = commentRepository.findById(parentId)
 					.orElseThrow(() -> new IllegalArgumentException(""));
 		} else{ parent = null; }
-		Long postId = ((Integer) data.get("postId")).longValue();
+		Long contentId = ((Integer) data.get("contentId")).longValue();
 		String commentContent = (String) data.get("commentContent");
 
-		Contents contents = contentsRepository.findById(postId)
+		Contents contents = contentsRepository.findById(contentId)
 						.orElseThrow(() -> new IllegalArgumentException(""));
 
 		Comment comment = Comment.builder()
-								.post(contents)
+								.content(contents)
 								.commentContent(commentContent)
 								.parent(parent)
 								.user(user)

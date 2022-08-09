@@ -21,9 +21,9 @@ public class CommentController {
 	private final CommentService commentService;
 
 	// test 용
-	@GetMapping("/api/comments/{postId}")
-	public List<CommentResponseDto> getComment(@PathVariable Long postId) {
-		return commentService.getComment(postId);
+	@GetMapping("/api/comments/{contentId}")
+	public List<CommentResponseDto> getComment(@PathVariable Long contentId) {
+		return commentService.getComment(contentId);
 	}
 	//
 

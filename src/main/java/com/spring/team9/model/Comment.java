@@ -24,7 +24,7 @@ public class Comment extends Timestamped {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonBackReference
-	private Contents post; // 단방향 // content 에서 OneToMany, 양방향으로 하더라도 content DB 에는 정보가 들어가지 않습니다.
+	private Contents content; // 단방향 // content 에서 OneToMany, 양방향으로 하더라도 content DB 에는 정보가 들어가지 않습니다.
 
 	@Column(name = "comment_content", nullable = false)
 	private String commentContent;
@@ -41,9 +41,9 @@ public class Comment extends Timestamped {
 	private List<Like> likes = new ArrayList<>();
 
 	@Builder
-	public Comment (User user, Contents post, String commentContent, Comment parent) {
+	public Comment (User user, Contents content, String commentContent, Comment parent) {
 		this.user = user;
-		this.post = post;
+		this.content = content;
 		this.commentContent = commentContent;
 		this.parent = parent;
 	}
