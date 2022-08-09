@@ -56,4 +56,12 @@ public class ContentsController {
         ContentsService.createContents(requestDto);
         return new ResponseEntity<>("컨텐츠 등록에 성공했습니다",HttpStatus.OK);
     }
+
+    // 게시글 삭제
+    @DeleteMapping("/api/contents/{id}")
+    public Long deleteContents(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ContentsService.deleteContents(id, userDetails);
+    }
+
+
 }

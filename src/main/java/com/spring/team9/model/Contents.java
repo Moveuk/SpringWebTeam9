@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter // get 함수를 일괄적으로 만들어줍니다.
 @NoArgsConstructor // 기본 생성자를 만들어줍니다.
@@ -34,6 +36,10 @@ public class Contents extends Timestamped {
 
     @Column(name = "content_imgurl")
     private String imgUrl;
+
+    // 연관된 좋아요 함께 제거
+    @OneToMany(mappedBy = "contents", cascade = CascadeType.REMOVE)
+    private List<Like> likes = new ArrayList<>();
 
 
 
