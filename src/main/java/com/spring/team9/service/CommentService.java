@@ -41,7 +41,7 @@ public class CommentService {
 					.comment(comment)
 					.countLike(countLike)
 					.build();
-			if(comment.getReplies().size() != 0) { // 최하위 comment 만 수행
+			if(comment.getReplies().size() != 0) { // replies 가 있는 comment 만 수행
 				commentResponseDto.getReplies().addAll(temp); // temp List 를 dto 의 replies 에 새로 넣어주기
 			}
 			temp.clear();
