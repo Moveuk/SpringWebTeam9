@@ -1,5 +1,6 @@
 package com.spring.team9.S3;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -77,6 +78,10 @@ public class S3Service {
     public void deleteObjects(List<DeleteObjectsRequest.KeyVersion> object_keys) {
         DeleteObjectsRequest dor = new DeleteObjectsRequest(bucket)
                 .withKeys(object_keys);
-        s3Client.deleteObjects(dor);
+        try {
+            s3Client.deleteObjects(dor);    // exception 처리.
+        } catch (AmazonServiceException e) {
+            System.err.println(e.getErrorMessage());
+        }
     }
 }
