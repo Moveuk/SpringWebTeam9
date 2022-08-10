@@ -3,7 +3,7 @@ package com.spring.team9.controller;
 import com.spring.team9.S3.S3Service;
 import com.spring.team9.dto.ContentsRequestDto;
 import com.spring.team9.dto.ContentsResponseDto;
-import com.spring.team9.model.Contents;
+import com.spring.team9.dto.ResponseDto;
 import com.spring.team9.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,6 @@ import java.util.Objects;
 @RestController
 public class ContentsController {
 
-    private final com.spring.team9.repository.ContentsRepository ContentsRepository;
     private final com.spring.team9.service.ContentsService ContentsService;
 
     private final S3Service s3Service;
@@ -31,10 +30,12 @@ public class ContentsController {
     }
 
     // 게시글 조회
+    @ResponseBody
     @GetMapping("/api/contents/{id}")
-    public ContentsResponseDto getContent(@PathVariable Long id) {
+    public ResponseDto<?> getContent(@PathVariable Long id) {
         return ContentsService.getContents(id);
     }
+
 
     // 게시글 작성
     @PostMapping("/api/contents")
@@ -54,7 +55,7 @@ public class ContentsController {
         }
         requestDto.setAuthor(username);
         ContentsService.createContents(requestDto);
-        return new ResponseEntity<>("컨텐츠 등록에 성공했습니다",HttpStatus.OK);
+        return new ResponseEntity<>("컨텐츠 등록에 성공했습니다", HttpStatus.OK);
     }
 
     // 게시글 삭제
