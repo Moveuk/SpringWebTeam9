@@ -1,5 +1,6 @@
 package com.spring.team9.service;
 
+import com.spring.team9.S3.S3Service;
 import com.spring.team9.dto.ContentsRequestDto;
 import com.spring.team9.dto.ContentsResponseDto;
 import com.spring.team9.dto.ResponseDto;
@@ -12,20 +13,22 @@ import com.spring.team9.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @RequiredArgsConstructor
 @Service
 public class ContentsService {
 
-    private final ContentsRepository ContentsRepository;
+    private final ContentsRepository contentsRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
-
+    private final S3Service s3Service;
 
     // 게시글 작성
     @Transactional // 메소드 동작이 SQL 쿼리문임을 선언합니다.
@@ -42,13 +45,13 @@ public class ContentsService {
         requestDto.setUserId(user.getId());
         // 요청받은 DTO 로 DB에 저장할 객체 만들기
         Contents contents = requestDto.toContents(); //컨테츠객체 빌드
-        ContentsRepository.save(contents);
+        contentsRepository.save(contents);
         return ResponseDto.success(contents);
     }
 
     // 게시글 목록 리스트 조회
     public List<ContentsResponseDto> getContentsList() {
-        List<Contents> contents = ContentsRepository.findAllByOrderByCreatedAtDesc();
+        List<Contents> contents = contentsRepository.findAllByOrderByCreatedAtDesc();
         List<ContentsResponseDto> listContents = new ArrayList<>();
         for (Contents content : contents) {
             // + 좋아요 개수 카운팅
@@ -65,7 +68,7 @@ public class ContentsService {
     public ResponseDto<?> getContents(Long id) {
         Contents content;
         try {
-            content = ContentsRepository.findById(id).orElseThrow(
+            content = contentsRepository.findById(id).orElseThrow(
                     () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         } catch (IllegalArgumentException e) {
             return ResponseDto.fail("Null_Content", e.getMessage());
@@ -79,30 +82,32 @@ public class ContentsService {
         return ResponseDto.success(contentsResponseDto);
     }
 
+
     // 게시글 수정
     @Transactional
-    public ResponseDto<?> updateContents(Long id, ContentsRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Contents content;
-        try {
-            content = ContentsRepository.findById(id).orElseThrow(
-                    () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
-        } catch (IllegalArgumentException e) {
-            return ResponseDto.fail("Null_Content", e.getMessage());
-        }
+    public void updateContents(Long id, ContentsRequestDto requestDto, MultipartFile imageFile, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IllegalArgumentException, NullPointerException {
+        Contents content = contentsRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         if(!userDetails.getUser().getUsername().equals(content.getAuthor())){
             throw new IllegalArgumentException("작성자가 아닙니다.");
         }
+        if(requestDto.getTitle() == null || requestDto.getContents() == null || requestDto.getTitle().equals("") || requestDto.getContents().equals("")){
+            throw new NullPointerException("제목과 내용을 채워주세요.");
+        }
+        String imagePath;
+        if (!Objects.isNull(imageFile)) {
+            imagePath = s3Service.uploadImage(imageFile);
+            requestDto.setImgUrl(imagePath); // 받은 스트링값을 Url필드로 주입
+        }
         content.update(requestDto.getTitle(), requestDto.getContents(), requestDto.getImgUrl());
-        return ResponseDto.success(content);
-
     }
 
     // 게시글 삭제
     public Long deleteContents(Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Contents Contents = ContentsRepository.findById(id).orElseThrow(
+        Contents Contents = contentsRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         if (userDetails.getUser().getUsername().equals(Contents.getAuthor())) {
-            ContentsRepository.deleteById(id);
+            contentsRepository.deleteById(id);
         }
         return id;
     }

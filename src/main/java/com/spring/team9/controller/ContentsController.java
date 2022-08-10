@@ -19,21 +19,21 @@ import java.util.Objects;
 @RestController
 public class ContentsController {
 
-    private final com.spring.team9.service.ContentsService ContentsService;
+    private final com.spring.team9.service.ContentsService contentsService;
 
     private final S3Service s3Service;
 
     // 게시글 리스트 조회
     @GetMapping("/api/contents")
     public List<ContentsResponseDto> getContentsList() {
-        return ContentsService.getContentsList();
+        return contentsService.getContentsList();
     }
 
     // 게시글 조회
     @ResponseBody
     @GetMapping("/api/contents/{id}")
     public ResponseDto<?> getContent(@PathVariable Long id) {
-        return ContentsService.getContents(id);
+        return contentsService.getContents(id);
     }
 
 
@@ -54,32 +54,25 @@ public class ContentsController {
             }
         }
         requestDto.setAuthor(username);
-        ContentsService.createContents(requestDto);
+        contentsService.createContents(requestDto);
         return new ResponseEntity<>("컨텐츠 등록에 성공했습니다", HttpStatus.OK);
     }
 
-    // 게시글 수정
     @PutMapping("/api/contents/{id}")
     public ResponseEntity<String> updateContents(@PathVariable Long id, ContentsRequestDto requestDto, MultipartFile imageFile, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String imagePath;
-        if (!Objects.isNull(imageFile)) {
+
             try {
-                imagePath = s3Service.uploadImage(imageFile);
-                requestDto.setImgUrl(imagePath); // 받은 스트링값을 Url필드로 주입
-            } catch (NullPointerException e) {
-                return new ResponseEntity<>("파일 변환에 실패했습니다", HttpStatus.OK);
-            } catch (IllegalArgumentException e) {
+                contentsService.updateContents(id, requestDto, imageFile, userDetails);
+            } catch (NullPointerException | IllegalArgumentException e) {
                 return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
             }
-        }
-        ContentsService.updateContents(id, requestDto, userDetails);
         return new ResponseEntity<>("컨텐츠 수정에 성공했습니다", HttpStatus.OK);
     }
 
     // 게시글 삭제
     @DeleteMapping("/api/contents/{id}")
     public Long deleteContents(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ContentsService.deleteContents(id, userDetails);
+        return contentsService.deleteContents(id, userDetails);
     }
 
 
