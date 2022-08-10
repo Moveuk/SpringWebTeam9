@@ -36,6 +36,8 @@ public class SpringScheduler {
 
         List<DeleteObjectsRequest.KeyVersion> keys = s3Service.getImageKeys();  // s3로부터 img list 받아옴.
 
+        if (keys.isEmpty()) return; // s3에 이미지 값이 없으면 메서드 종료
+
         keys.stream().forEach(key -> {
             if (dbImgList.contains(key.getKey())) { // key를 db에서 가지고 있으면 삭제 List에서 제거
                 keys.remove(key);
