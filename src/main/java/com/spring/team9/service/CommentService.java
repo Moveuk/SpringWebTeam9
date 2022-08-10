@@ -6,6 +6,7 @@ import com.spring.team9.model.Contents;
 import com.spring.team9.model.User;
 import com.spring.team9.repository.CommentRepository;
 import com.spring.team9.repository.ContentsRepository;
+import com.spring.team9.repository.LikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,20 +19,39 @@ public class CommentService {
 
 	private final CommentRepository commentRepository;
 	private final ContentsRepository contentsRepository;
+	private final LikeRepository likeRepository;
 
 	// test
 	public List<CommentResponseDto> getComment(Long contentId) {
 		List<Comment> comments = commentRepository.findAllByOrderByCreatedAtDesc(contentId);
-		List<CommentResponseDto> responseDtoList = new ArrayList<>();
+		responseDtoList.clear();
+		return getLike(comments);
+	}
+	// test
+
+	List<CommentResponseDto> responseDtoList = new ArrayList<>();
+	List<CommentResponseDto> temp = new ArrayList<>();
+	public List<CommentResponseDto> getLike(List<Comment> comments) {
 		for(Comment comment : comments) {
-			CommentResponseDto commentResponseDto = CommentResponseDto.builder()
-							.comment(comment)
-							.build();
-			responseDtoList.add(commentResponseDto);
+			if(comment.getReplies().size() != 0) {
+				getLike(comment.getReplies()); // 재귀함수로 replies 가 없는 comment 까지 들어가기
+			}
+			int countLike = likeRepository.countByCommentCommentId(comment.getCommentId()); // 좋아요 개수 가져오기
+			CommentResponseDto commentResponseDto = CommentResponseDto.builder() // dto 로 바꾸기
+					.comment(comment)
+					.countLike(countLike)
+					.build();
+			if(comment.getReplies().size() != 0) { // replies 가 있는 comment 만 수행
+				commentResponseDto.getReplies().addAll(temp); // temp List 를 dto 의 replies 에 새로 넣어주기
+			}
+			temp.clear();
+			temp.add(commentResponseDto); // temp List 비우고 dto 넣기
+			if(comment.getParent() == null) {
+				responseDtoList.addAll(temp); // 최상위 comment 일 경우에만 return 해줄 List 에 추가
+			}
 		}
 		return responseDtoList;
 	}
-	//
 
 	public Comment createComment(HashMap data, User user) {
 		Long parentId;

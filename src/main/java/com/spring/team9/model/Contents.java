@@ -53,9 +53,8 @@ public class Contents extends Timestamped {
         this.imgUrl = imgUrl;
     }
 
-    public void update(String title, String author, String contents, String imgUrl) {
+    public void update(String title, String contents, String imgUrl) {
         this.title = title;
-        this.author = author;
         this.contents = contents;
         this.imgUrl = imgUrl;
     }

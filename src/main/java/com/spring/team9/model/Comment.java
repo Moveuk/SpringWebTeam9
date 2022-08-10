@@ -38,6 +38,7 @@ public class Comment extends Timestamped {
 
 	// 연관된 좋아요 함께 제거
 	@OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
+	@JsonBackReference
 	private List<Like> likes = new ArrayList<>();
 
 	@Builder
