@@ -14,6 +14,8 @@ public class ContentsResponseDto {
     private String title;
     private String name;
     private String contents;
+
+    private String imageUrl;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime modifiedAt;
 
@@ -25,6 +27,7 @@ public class ContentsResponseDto {
         this.title = content.getTitle();
         this.name = content.getAuthor();
         this.contents = content.getContents();
+        this.imageUrl = content.getImgUrl();
         this.modifiedAt = content.getModifiedAt();
         this.countLike = countLike;
     }
