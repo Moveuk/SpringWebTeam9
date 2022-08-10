@@ -12,15 +12,19 @@ import java.util.*;
 public class CommentResponseDto {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private final LocalDateTime modifiedAt;
+	private Long commentId;
 	private String username;
 	private String commentContent;
-	private List<Comment> replies;
+	private int countLike;
+	private List<CommentResponseDto> replies;
 
 	@Builder
-	public CommentResponseDto(Comment comment) {
+	public CommentResponseDto(Comment comment, int countLike) {
 		this.modifiedAt = comment.getModifiedAt();
+		this.commentId = comment.getCommentId();
 		this.username = comment.getUser().getUsername();
 		this.commentContent = comment.getCommentContent();
-		this.replies = comment.getReplies();
+		this.countLike = countLike;
+		this.replies = new ArrayList<>();
 	}
 }
