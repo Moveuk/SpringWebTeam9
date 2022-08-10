@@ -79,14 +79,22 @@ public class ContentsService {
         return ResponseDto.success(contentsResponseDto);
     }
 
-    // 게시글 수정 기능 (사용 안함)
+    // 게시글 수정
     @Transactional
-    public Long update(Long id, ContentsRequestDto requestDto) {
-        Contents Contents = ContentsRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
-        );
-        Contents.update(requestDto.getTitle(), requestDto.getAuthor(), requestDto.getContents(), requestDto.getImgUrl());
-        return Contents.getId();
+    public ResponseDto<?> updateContents(Long id, ContentsRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Contents content;
+        try {
+            content = ContentsRepository.findById(id).orElseThrow(
+                    () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseDto.fail("Null_Content", e.getMessage());
+        }
+        if(!userDetails.getUser().getUsername().equals(content.getAuthor())){
+            throw new IllegalArgumentException("작성자가 아닙니다.");
+        }
+        content.update(requestDto.getTitle(), requestDto.getContents(), requestDto.getImgUrl());
+        return ResponseDto.success(content);
+
     }
 
     // 게시글 삭제
@@ -98,4 +106,5 @@ public class ContentsService {
         }
         return id;
     }
+
 }
