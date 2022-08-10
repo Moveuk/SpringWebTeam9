@@ -1,5 +1,6 @@
 package com.spring.team9.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.spring.team9.dto.ContentsRequestDto;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,6 +40,7 @@ public class Contents extends Timestamped {
 
     // 연관된 좋아요 함께 제거
     @OneToMany(mappedBy = "contents", cascade = CascadeType.REMOVE)
+    @JsonBackReference
     private List<Like> likes = new ArrayList<>();
 
 

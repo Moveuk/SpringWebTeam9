@@ -1,6 +1,7 @@
 package com.spring.team9.repository;
 
 import com.spring.team9.model.Comment;
+import com.spring.team9.model.Contents;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,4 +12,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 	List<Comment> findAllByOrderByCreatedAtDesc(Long contentId); // comment 리스트
 	@Query("")
 	List<Comment> findAllByOrderByCreatedAtAsc(); // replies 리스트
+
+	List<Comment> findAllByUserIdAndParent(Long user_id, Comment parent);
+	List<Comment> findAllByUserIdAndParentNotNull(Long user_id);
 }

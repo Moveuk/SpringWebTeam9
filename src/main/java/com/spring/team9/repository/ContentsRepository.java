@@ -10,4 +10,6 @@ public interface ContentsRepository extends JpaRepository<Contents, Long> {
     List<Contents> findAllByOrderByCreatedAtDesc();
 
     <T> List<T> findAllBy(Class<T> type);
+
+    List<Contents> findAllByUserId(Long userId);
 }
