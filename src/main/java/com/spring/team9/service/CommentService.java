@@ -24,6 +24,9 @@ public class CommentService {
 
 	public List<CommentResponseDto> getComment(Long contentId) {
 		List<Comment> comments = commentRepository.findAllByOrderByCreatedAtDesc(contentId);
+		if(comments == null) {
+			throw new IllegalArgumentException("댓글 없음");
+		}
 		return toDto(comments);
 	}
 

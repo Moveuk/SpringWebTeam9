@@ -1,10 +1,12 @@
 package com.spring.team9.controller;
 
 import com.spring.team9.S3.S3Service;
+import com.spring.team9.dto.CommentResponseDto;
 import com.spring.team9.dto.ContentsRequestDto;
 import com.spring.team9.dto.ContentsResponseDto;
 import com.spring.team9.dto.ResponseDto;
 import com.spring.team9.security.UserDetailsImpl;
+import com.spring.team9.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,15 +14,16 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @RestController
 public class ContentsController {
 
     private final com.spring.team9.service.ContentsService contentsService;
-
+    private final CommentService commentService;
     private final S3Service s3Service;
 
     // 게시글 리스트 조회
@@ -33,7 +36,14 @@ public class ContentsController {
     @ResponseBody
     @GetMapping("/api/contents/{id}")
     public ResponseDto<?> getContent(@PathVariable Long id) {
-        return contentsService.getContents(id);
+        HashMap c = new HashMap();
+        try {
+            c.put("contents", contentsService.getContents(id));
+            c.put("comment", commentService.getComment(id));
+        } catch (IllegalArgumentException e) {
+            return ResponseDto.fail("", e.getMessage());
+        }
+        return ResponseDto.success(c);
     }
 
 

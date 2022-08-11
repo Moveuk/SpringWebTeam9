@@ -65,21 +65,16 @@ public class ContentsService {
         return listContents;
     }
     // 게시글 조회
-    public ResponseDto<?> getContents(Long id) {
-        Contents content;
-        try {
-            content = contentsRepository.findById(id).orElseThrow(
-                    () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
-        } catch (IllegalArgumentException e) {
-            return ResponseDto.fail("Null_Content", e.getMessage());
-        }
+    public ContentsResponseDto getContents(Long id) {
+        Contents content = contentsRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         int countLike = likeRepository.countByContentsId(content.getId());
         ContentsResponseDto contentsResponseDto = ContentsResponseDto.builder()
                 .content(content)
                 .countLike(countLike)
                 .build();
 
-        return ResponseDto.success(contentsResponseDto);
+        return contentsResponseDto;
     }
 
 
