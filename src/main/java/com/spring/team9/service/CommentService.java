@@ -40,19 +40,19 @@ public class CommentService {
 		return commentDto;
 	}
 
-	public Comment createComment(HashMap data, User user) {
+	public void createComment(HashMap data, User user) {
 		Long parentId;
 		Comment parent;
 		if(data.get("parentId")!=null) {
 			parentId = ((Integer) data.get("parentId")).longValue();
 			parent = commentRepository.findById(parentId)
-					.orElseThrow(() -> new IllegalArgumentException(""));
+					.orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다"));
 		} else{ parent = null; }
 		Long contentId = ((Integer) data.get("contentId")).longValue();
 		String commentContent = (String) data.get("commentContent");
 
 		Contents contents = contentsRepository.findById(contentId)
-						.orElseThrow(() -> new IllegalArgumentException(""));
+						.orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다"));
 
 		Comment comment = Comment.builder()
 								.content(contents)
@@ -61,7 +61,6 @@ public class CommentService {
 								.user(user)
 								.build();
 		commentRepository.save(comment);
-		return comment;
 	}
 
 	@Transactional
@@ -72,7 +71,7 @@ public class CommentService {
 		if(user.getId().equals(writer)) {
 			comment.update(commentContent);
 		} else {
-			throw new IllegalArgumentException("댓글 작성자만 수정 가능");
+			throw new IllegalArgumentException("댓글 작성자만 수정 가능합니다");
 		}
 	}
 
@@ -83,7 +82,7 @@ public class CommentService {
 		if(user.getId().equals(writer)) {
 			commentRepository.deleteById(commentId);
 		} else {
-			throw new IllegalArgumentException("댓글 작성자만 삭제 가능");
+			throw new IllegalArgumentException("댓글 작성자만 삭제 가능합니다");
 		}
 	}
 }
