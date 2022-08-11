@@ -20,9 +20,10 @@ public class ContentsResponseDto {
     private final LocalDateTime modifiedAt;
 
     private int countLike;
+    private int countComment;
 
     @Builder
-    public ContentsResponseDto(Contents content, int countLike) {
+    public ContentsResponseDto(Contents content, int countLike, int countComment) {
         this.id = content.getId();
         this.title = content.getTitle();
         this.name = content.getAuthor();
@@ -30,6 +31,7 @@ public class ContentsResponseDto {
         this.imageUrl = content.getImgUrl();
         this.modifiedAt = content.getModifiedAt();
         this.countLike = countLike;
+        this.countComment = countComment;
     }
 
 

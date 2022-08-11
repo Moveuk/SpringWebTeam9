@@ -6,6 +6,7 @@ import com.spring.team9.dto.ContentsResponseDto;
 import com.spring.team9.dto.ResponseDto;
 import com.spring.team9.model.Contents;
 import com.spring.team9.model.User;
+import com.spring.team9.repository.CommentRepository;
 import com.spring.team9.repository.ContentsRepository;
 import com.spring.team9.repository.LikeRepository;
 import com.spring.team9.repository.UserRepository;
@@ -26,6 +27,7 @@ import java.util.Objects;
 public class ContentsService {
 
     private final ContentsRepository contentsRepository;
+    private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
     private final S3Service s3Service;
@@ -56,8 +58,10 @@ public class ContentsService {
         for (Contents content : contents) {
             // + 좋아요 개수 카운팅
             int countLike = likeRepository.countByContentsId(content.getId());
+            int countComment = commentRepository.countByContentId(content.getId());
             ContentsResponseDto contentsResponseDto = ContentsResponseDto.builder()
                     .content(content)
+                    .countComment(countComment)
                     .countLike(countLike)
                     .build();
             listContents.add(contentsResponseDto);
@@ -69,8 +73,10 @@ public class ContentsService {
         Contents content = contentsRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         int countLike = likeRepository.countByContentsId(content.getId());
+        int countComment = commentRepository.countByContentId(content.getId());
         ContentsResponseDto contentsResponseDto = ContentsResponseDto.builder()
                 .content(content)
+                .countComment(countComment)
                 .countLike(countLike)
                 .build();
 
