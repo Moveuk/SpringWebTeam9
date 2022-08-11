@@ -14,11 +14,11 @@ public class MypageResponseDto {
     private List<Contents> contentList;
     private List<Comment> commentList;
     private List<Comment> replyList;
-    private List<Like> likeContentList;
-    private List<Like> likeCommentList;
+    private List<Contents> likeContentList;
+    private List<Comment> likeCommentList;
 
     @Builder
-    public MypageResponseDto(List<Contents> contentList,List<Comment> commentList, List<Comment> replyList, List<Like> likeContentList, List<Like> likeCommentList) {
+    public MypageResponseDto(List<Contents> contentList,List<Comment> commentList, List<Comment> replyList, List<Contents> likeContentList, List<Comment> likeCommentList) {
         this.contentList = contentList;
         this.commentList = commentList;
         this.replyList = replyList;

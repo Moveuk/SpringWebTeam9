@@ -36,10 +36,6 @@ public class Comment extends Timestamped {
 	@JsonBackReference
 	private Comment parent; // 양방향 // DB 에는 Key 값이 저장되고, JAVA 에서는 객체로 표현됩니다.
 
-	// 연관된 좋아요 함께 제거
-	@OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
-	@JsonBackReference
-	private List<Like> likes = new ArrayList<>();
 
 	@Builder
 	public Comment (User user, Contents content, String commentContent, Comment parent) {

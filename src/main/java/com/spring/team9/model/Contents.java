@@ -38,11 +38,6 @@ public class Contents extends Timestamped {
     @Column(name = "content_imgurl")
     private String imgUrl;
 
-    // 연관된 좋아요 함께 제거
-    @OneToMany(mappedBy = "contents", cascade = CascadeType.REMOVE)
-    @JsonBackReference
-    private List<Like> likes = new ArrayList<>();
-
 
 
     //img를 포함한 게시글
