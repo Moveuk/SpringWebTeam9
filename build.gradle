@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.spring'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
@@ -37,7 +37,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket:2.6.7'
 
     //AWS S3 라이브러리-순욱
-//   implementation group: 'org.springframework.cloud', name: 'spring-cloud-aws', version: '2.2.1.RELEASE', ext: 'pom'
     implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
     implementation 'com.amazonaws:aws-java-sdk-s3'
 
