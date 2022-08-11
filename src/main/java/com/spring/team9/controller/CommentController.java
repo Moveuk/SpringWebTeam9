@@ -1,6 +1,5 @@
 package com.spring.team9.controller;
 
-import com.spring.team9.dto.CommentResponseDto;
 import com.spring.team9.dto.ResponseDto;
 import com.spring.team9.model.User;
 import com.spring.team9.security.UserDetailsImpl;
@@ -12,14 +11,14 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 
+@RequestMapping("/api/comments")
 @RequiredArgsConstructor
 @RestController
 public class CommentController {
 	private final CommentService commentService;
 
-	@GetMapping("/api/comments/{contentId}")
+	@GetMapping("/{contentId}")
 	public ResponseDto<?> getComment(@PathVariable Long contentId) {
 		try {
 			return ResponseDto.success(commentService.getComment(contentId));
@@ -28,7 +27,7 @@ public class CommentController {
 		}
 	}
 
-	@PostMapping("/api/comments")
+	@PostMapping
 	public ResponseEntity<String> createComment(@RequestBody HashMap<String, Object> data,
 								 @AuthenticationPrincipal UserDetailsImpl userDetails) {
 		try {
@@ -42,7 +41,7 @@ public class CommentController {
 		return new ResponseEntity<>("댓글이 등록되었습니다", HttpStatus.OK);
 	}
 
-	@PatchMapping("/api/comments/{commentId}")
+	@PatchMapping("/{commentId}")
 	public ResponseEntity<String> updateComment(@PathVariable Long commentId, @RequestBody String commentContent,
 							  @AuthenticationPrincipal UserDetailsImpl userDetails) {
 		try {
@@ -56,7 +55,7 @@ public class CommentController {
 		return new ResponseEntity<>("댓글이 수정되었습니다", HttpStatus.OK);
 	}
 
-	@DeleteMapping("/api/comments/{commentId}")
+	@DeleteMapping("/{commentId}")
 	public ResponseEntity<String> deleteComment(@PathVariable Long commentId,
 							  @AuthenticationPrincipal UserDetailsImpl userDetails) {
 		try {
