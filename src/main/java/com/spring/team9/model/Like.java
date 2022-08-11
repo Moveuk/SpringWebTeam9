@@ -1,11 +1,15 @@
 package com.spring.team9.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Setter
 @Getter
@@ -21,10 +25,14 @@ public class Like {
     private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonBackReference
     @JoinColumn(name = "content_id")
     private Contents contents;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonBackReference
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
