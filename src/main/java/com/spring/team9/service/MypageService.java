@@ -1,10 +1,8 @@
 package com.spring.team9.service;
 
-import com.spring.team9.dto.ContentsResponseDto;
 import com.spring.team9.dto.MypageResponseDto;
 import com.spring.team9.model.Comment;
 import com.spring.team9.model.Contents;
-import com.spring.team9.model.Like;
 import com.spring.team9.repository.CommentRepository;
 import com.spring.team9.repository.ContentsRepository;
 import com.spring.team9.repository.LikeRepository;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
