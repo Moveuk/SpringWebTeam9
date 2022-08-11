@@ -1,13 +1,12 @@
 package com.spring.team9.controller;
 
 import com.spring.team9.dto.CommentResponseDto;
-import com.spring.team9.model.Comment;
 import com.spring.team9.model.User;
-import com.spring.team9.repository.CommentRepository;
 import com.spring.team9.security.UserDetailsImpl;
 import com.spring.team9.service.CommentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,35 +16,47 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 public class CommentController {
-	private final CommentRepository commentRepository;
 	private final CommentService commentService;
 
-	// test 용
 	@GetMapping("/api/comments/{contentId}")
 	public List<CommentResponseDto> getComment(@PathVariable Long contentId) {
-		return commentService.getComment(contentId);
+		List<CommentResponseDto> returns = commentService.getComment(contentId);
+		return returns;
 	}
-	//
 
 	@PostMapping("/api/comments")
-	public Comment createComment(@RequestBody HashMap<String, Object> data,
+	public ResponseEntity<String> createComment(@RequestBody HashMap<String, Object> data,
 								 @AuthenticationPrincipal UserDetailsImpl userDetails) {
 		User user = userDetails.getUser();
-		return commentService.createComment(data, user);
+		try {
+			commentService.createComment(data, user);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+		}
+		return new ResponseEntity<>("댓글이 등록되었습니다", HttpStatus.OK);
 	}
 
 	@PatchMapping("/api/comments/{commentId}")
-	public Long updateComment(@PathVariable Long commentId, @RequestBody String commentContent,
+	public ResponseEntity<String> updateComment(@PathVariable Long commentId, @RequestBody String commentContent,
 							  @AuthenticationPrincipal UserDetailsImpl userDetails) {
 		User user = userDetails.getUser();
-		commentService.updateComment(commentId, commentContent, user);
-		return commentId;
+		try {
+			commentService.updateComment(commentId, commentContent, user);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+		}
+		return new ResponseEntity<>("댓글이 수정되었습니다", HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('ROLE_USER')")
 	@DeleteMapping("/api/comments/{commentId}")
-	public Long deleteComment(@PathVariable Long commentId) {
-		commentRepository.deleteById(commentId);
-		return commentId;
+	public ResponseEntity<String> deleteComment(@PathVariable Long commentId,
+							  @AuthenticationPrincipal UserDetailsImpl userDetails) {
+		User user = userDetails.getUser();
+		try {
+			commentService.deleteComment(commentId, user);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+		}
+		return new ResponseEntity<>("댓글이 정상적으로 삭제되었습니다", HttpStatus.OK);
 	}
 }

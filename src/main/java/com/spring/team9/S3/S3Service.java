@@ -1,5 +1,6 @@
 package com.spring.team9.S3;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -7,6 +8,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +21,7 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
+@Slf4j
 @Service
 @NoArgsConstructor
 public class S3Service {
@@ -77,6 +80,11 @@ public class S3Service {
     public void deleteObjects(List<DeleteObjectsRequest.KeyVersion> object_keys) {
         DeleteObjectsRequest dor = new DeleteObjectsRequest(bucket)
                 .withKeys(object_keys);
-        s3Client.deleteObjects(dor);
+        try {
+            s3Client.deleteObjects(dor);    // exception 처리.
+        } catch (AmazonServiceException e) {
+            log.error("s3 Objects 삭제 도중 AmazonServiceException 발생");
+            System.err.println(e.getErrorMessage());
+        }
     }
 }
