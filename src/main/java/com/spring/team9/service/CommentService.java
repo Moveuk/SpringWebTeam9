@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -21,36 +22,22 @@ public class CommentService {
 	private final ContentsRepository contentsRepository;
 	private final LikeRepository likeRepository;
 
-	// test
 	public List<CommentResponseDto> getComment(Long contentId) {
 		List<Comment> comments = commentRepository.findAllByOrderByCreatedAtDesc(contentId);
-		responseDtoList.clear();
-		return getLike(comments);
+		return toDto(comments);
 	}
-	// test
 
-	List<CommentResponseDto> responseDtoList = new ArrayList<>();
-	List<CommentResponseDto> temp = new ArrayList<>();
-	public List<CommentResponseDto> getLike(List<Comment> comments) {
-		for(Comment comment : comments) {
-			if(comment.getReplies().size() != 0) {
-				getLike(comment.getReplies()); // 재귀함수로 replies 가 없는 comment 까지 들어가기
-			}
-			int countLike = likeRepository.countByCommentCommentId(comment.getCommentId()); // 좋아요 개수 가져오기
-			CommentResponseDto commentResponseDto = CommentResponseDto.builder() // dto 로 바꾸기
-					.comment(comment)
-					.countLike(countLike)
-					.build();
-			if(comment.getReplies().size() != 0) { // replies 가 있는 comment 만 수행
-				commentResponseDto.getReplies().addAll(temp); // temp List 를 dto 의 replies 에 새로 넣어주기
-			}
-			temp.clear();
-			temp.add(commentResponseDto); // temp List 비우고 dto 넣기
-			if(comment.getParent() == null) {
-				responseDtoList.addAll(temp); // 최상위 comment 일 경우에만 return 해줄 List 에 추가
+	public List<CommentResponseDto> toDto(List<Comment> comments) {
+		List<CommentResponseDto> commentDto = comments.stream() // 들어온 댓글 리스트를 dto 로 변환
+				.map(c -> new CommentResponseDto(c, likeRepository.countByCommentCommentId(c.getCommentId())))
+				.collect(Collectors.toList());
+		for(int i=0; i<comments.size(); i++) { // 댓글 리스트의 각 댓글별로
+			if (comments.get(i).getReplies().size() != 0) { // 대댓글이 존재한다면
+				List<CommentResponseDto> cRD = toDto(comments.get(i).getReplies()); // 재귀함수로 대댓글 리스트를 보냄 -> dto 리스트로 바뀌어서 돌아옴
+				commentDto.get(i).getReplies().addAll(cRD); // 받아온 대댓글 dto 리스트를 그 자리에 추가
 			}
 		}
-		return responseDtoList;
+		return commentDto;
 	}
 
 	public Comment createComment(HashMap data, User user) {
@@ -78,15 +65,25 @@ public class CommentService {
 	}
 
 	@Transactional
-	public Long updateComment(Long commentId, String commentContent, User user) {
+	public void updateComment(Long commentId, String commentContent, User user) {
 		Comment comment = commentRepository.findById(commentId)
-				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글")
-		);
-		if(Objects.equals(user, comment.getUser())) {
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글"));
+		Long writer = comment.getUser().getId();
+		if(user.getId().equals(writer)) {
 			comment.update(commentContent);
 		} else {
 			throw new IllegalArgumentException("댓글 작성자만 수정 가능");
 		}
-		return comment.getCommentId();
+	}
+
+	public void deleteComment(Long commentId, User user) {
+		Comment comment = commentRepository.findById(commentId)
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 댓글"));
+		Long writer = comment.getUser().getId();
+		if(user.getId().equals(writer)) {
+			commentRepository.deleteById(commentId);
+		} else {
+			throw new IllegalArgumentException("댓글 작성자만 삭제 가능");
+		}
 	}
 }
