@@ -51,7 +51,12 @@ public class ContentsController {
     @PostMapping("/api/contents")
     public ResponseEntity<String> createContents(ContentsRequestDto requestDto, MultipartFile imageFile, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         // 로그인 되어 있는 ID의 username
-        String username = userDetails.getUser().getUsername();
+        String username;
+        try {
+            username = userDetails.getUser().getUsername();
+        } catch (NullPointerException e) {
+            return new ResponseEntity<>("로그인을 해주세요.", HttpStatus.OK);
+        }
         String imagePath;
         if (!Objects.isNull(imageFile)) {
             try {

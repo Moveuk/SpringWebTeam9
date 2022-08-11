@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/mypage")
 @RequiredArgsConstructor
 @RestController
 public class MypageController {
@@ -17,7 +16,7 @@ public class MypageController {
     private final MypageService mypageService;
 
     // 마이페이지 조회
-    @GetMapping("/")
+    @GetMapping("/api/mypage")
     public MypageResponseDto getMyContentList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return mypageService.getMyPageList(userDetails);
     }
