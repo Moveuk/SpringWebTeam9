@@ -1,6 +1,7 @@
 package com.spring.team9.controller;
 
 import com.spring.team9.dto.CommentResponseDto;
+import com.spring.team9.dto.ResponseDto;
 import com.spring.team9.model.User;
 import com.spring.team9.security.UserDetailsImpl;
 import com.spring.team9.service.CommentService;
@@ -19,17 +20,22 @@ public class CommentController {
 	private final CommentService commentService;
 
 	@GetMapping("/api/comments/{contentId}")
-	public List<CommentResponseDto> getComment(@PathVariable Long contentId) {
-		List<CommentResponseDto> returns = commentService.getComment(contentId);
-		return returns;
+	public ResponseDto<?> getComment(@PathVariable Long contentId) {
+		try {
+			return ResponseDto.success(commentService.getComment(contentId));
+		} catch (IllegalArgumentException e) {
+			return ResponseDto.fail("", e.getMessage());
+		}
 	}
 
 	@PostMapping("/api/comments")
 	public ResponseEntity<String> createComment(@RequestBody HashMap<String, Object> data,
 								 @AuthenticationPrincipal UserDetailsImpl userDetails) {
-		User user = userDetails.getUser();
 		try {
+			User user = userDetails.getUser();
 			commentService.createComment(data, user);
+		} catch (NullPointerException n) {
+			return new ResponseEntity<>("로그인 후 이용해주세요", HttpStatus.OK);
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
 		}
@@ -39,9 +45,11 @@ public class CommentController {
 	@PatchMapping("/api/comments/{commentId}")
 	public ResponseEntity<String> updateComment(@PathVariable Long commentId, @RequestBody String commentContent,
 							  @AuthenticationPrincipal UserDetailsImpl userDetails) {
-		User user = userDetails.getUser();
 		try {
+			User user = userDetails.getUser();
 			commentService.updateComment(commentId, commentContent, user);
+		} catch (NullPointerException n) {
+			return new ResponseEntity<>("로그인 후 이용해주세요", HttpStatus.OK);
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
 		}
@@ -51,9 +59,11 @@ public class CommentController {
 	@DeleteMapping("/api/comments/{commentId}")
 	public ResponseEntity<String> deleteComment(@PathVariable Long commentId,
 							  @AuthenticationPrincipal UserDetailsImpl userDetails) {
-		User user = userDetails.getUser();
 		try {
+			User user = userDetails.getUser();
 			commentService.deleteComment(commentId, user);
+		} catch (NullPointerException n) {
+			return new ResponseEntity<>("로그인 후 이용해주세요", HttpStatus.OK);
 		} catch (IllegalArgumentException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
 		}
