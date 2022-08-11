@@ -2,7 +2,9 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,linux,java,intellij
 
 ### Custom ###
-
+gradlew
+gradlew.bat
+src/main/resources/application.yml
 .idea/**
 build
 !gradle/wrapper/gradle-wrapper.jar
